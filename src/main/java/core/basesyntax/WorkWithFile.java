@@ -48,7 +48,7 @@ public class WorkWithFile {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Can't read data from file: " + fromFileName, e);
         }
         return new int[]{supply, buy};
     }
@@ -67,7 +67,7 @@ public class WorkWithFile {
             writer.newLine();
             writer.write(RESULT + "," + result);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Can't write data to file: " + toFileName, e);
         }
     }
 }
