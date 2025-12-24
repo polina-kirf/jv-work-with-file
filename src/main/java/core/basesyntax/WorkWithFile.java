@@ -10,7 +10,16 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 public class WorkWithFile {
+    private static final String SUPPLY = "supply";
+    private static final String BUY = "buy";
+    private static final String RESULT = "result";
+
     public void getStatistic(String fromFileName, String toFileName) {
+        int[] report = createReport(fromFileName);
+        writeReport(toFileName, report);
+    }
+
+    private int[] createReport(String fromFileName) {
         int supply = 0;
         int buy = 0;
 
@@ -23,13 +32,15 @@ public class WorkWithFile {
                 String[] parts = line.split(",");
                 if (!line.isEmpty() && parts.length == 2) {
                     String op = parts[0].trim();
-                    int val = Integer.parseInt(parts[1].trim());
+                    String val = parts[1].trim();
 
                     try {
-                        if ("supply".equalsIgnoreCase(op)) {
-                            supply += val;
-                        } else if ("buy".equalsIgnoreCase(op)) {
-                            buy += val;
+                        int value = Integer.parseInt(val);
+
+                        if (SUPPLY.equalsIgnoreCase(op)) {
+                            supply += value;
+                        } else if (BUY.equalsIgnoreCase(op)) {
+                            buy += value;
                         }
                     } catch (NumberFormatException e) {
                         // skip invalid numeric value
@@ -39,16 +50,22 @@ public class WorkWithFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return new int[]{supply, buy};
+    }
+
+    private void writeReport(String toFileName, int[] report) {
+        int supply = report[0];
+        int buy = report[1];
         int result = supply - buy;
 
         try (BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(toFileName),
                         StandardCharsets.UTF_8))) {
-            writer.write("supply," + supply);
+            writer.write(SUPPLY + "," + supply);
             writer.newLine();
-            writer.write("buy," + buy);
+            writer.write(BUY + "," + buy);
             writer.newLine();
-            writer.write("result," + result);
+            writer.write(RESULT + "," + result);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
